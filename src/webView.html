@@ -1,0 +1,185 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <title>webView</title>
+    <meta name='viewport' content='width=device-width, user-scalable=no'>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <style>
+      html, body {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+      }
+      svg {
+        display: flex;
+        flex: 8;
+        flex-direction: column;
+        margin: 10px;
+        padding: 10px;
+        border: 1px solid green;
+      }
+      body {
+        margin: 0;
+      }
+      #header {
+        flex: 0.8;
+        margin-left: 10px;
+        flex-direction: row;
+        display: flex;
+      }
+      #header h3,
+      #header div {
+        flex: 5;
+        margin: 0px;
+        align-items: center;
+        display: flex;
+      }
+      #header div {
+        justify-content: flex-end;
+        margin-right: 10px;
+        font-size: 0.8em;
+        letter-spacing: -0.3px;
+        font-weight: 300;
+        align-items: flex-end;
+        padding-bottom: 10px;
+      }
+      #btnContainer {
+        margin: 10px;
+        display: flex;
+        flex: 0.8;
+      }
+      #btnContainer button {
+        letter-spacing: 3px;
+        font-weight: 500;
+        flex: 3;
+        font-size: 17px;
+      }
+      #msg {
+        display: flex;
+        flex: 6;
+        justify-content: flex-end;
+        align-items: center;
+      }
+    </style>
+    <script type="text/javascript">
+      width = window.innerWidth,
+      height = window.innerHeight;
+      elmTarget = null;
+      elmSvg = null;
+    </script>
+
+    <script
+    src="https://code.jquery.com/jquery-3.2.1.min.js"
+    integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+    crossorigin="anonymous"></script>
+
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/d3/4.11.0/d3.js'></script>
+
+    <script>
+
+    </script>
+  </head>
+<body>
+  <div id='header'>
+    <h3>Bar Chart</h3>
+    <div>best for iPhone 6s</div>
+  </div>
+  <svg></svg>
+  <script type='text/javascript'>
+    var data, elmSvg, elmMsg, c,
+        numHeightOfSvg, ns = 'http://www.w3.org/2000/svg',
+        numCountsOfBarChart = 15, numMaxHeightEachBar = 20,
+        numHeightOfInterval = 0;
+
+    function fnMakeRandomData() {
+      numHeightOfSvg = $('svg').height();
+      var a = [];
+      numHeightOfInterval = (numHeightOfSvg - (numCountsOfBarChart * numMaxHeightEachBar)) / (numCountsOfBarChart - 1);
+      for(var i=0; i<numCountsOfBarChart; i++) a.push(Math.floor(Math.random() * 30 + 1))
+      return a;
+    }
+
+    function fnSetAttributeNS(a, b) {
+      Object.keys(b).map(function(v) {
+        a.setAttributeNS(null, v, b[v])
+      })
+    }
+
+
+    function fnRender() {
+      data || (data = fnMakeRandomData());
+
+      elmSvg = document.getElementsByTagName('svg')[0];
+      elmMsg = document.getElementById('msg');
+      elmMsgChildNodes = elmMsg.childNodes;
+
+      data.map(function(v, i) {
+        var elmRect = document.createElementNS(ns, 'rect')
+        fnSetAttributeNS(elmRect, {
+          x: 0,
+          y: i * (numMaxHeightEachBar + numHeightOfInterval),
+          width: v * 10,
+          height: numMaxHeightEachBar,
+          fill: 'rgb(0, 0, '+Math.floor(v * 10)+')'
+        })
+        elmSvg.appendChild(elmRect);
+
+        var elmText = document.createElementNS(ns, 'text')
+        fnSetAttributeNS(elmText, {
+          x: v * 10 + 10,
+          y: (i * (numMaxHeightEachBar + numHeightOfInterval)) + 13,
+        })
+        var elmTextNode = document.createTextNode(v)
+        elmText.appendChild(elmTextNode);
+        elmSvg.appendChild(elmText)
+      })
+
+      elmMsg.childNodes.length == 1 && (setTimeout(function() {
+        elmMsg.childNodes[0].textContent = ''
+      }, 400));
+    }
+
+    function fnMsg() {
+      var elmTxt = document.createTextNode('Updating...');
+      elmMsgChildNodes.length == 0 ? elmMsg.appendChild(elmTxt) : (elmMsgChildNodes[0].textContent = 'Updating...')
+    }
+
+    function fnReset() {
+      fnMsg();
+      data = fnMakeRandomData();
+      fnDeleteChildNodesOnSvg(true);
+    }
+
+    function fnDeleteChildNodesOnSvg(a) {
+      var elmChildNodesOfSvg = elmSvg.childNodes;
+      var numLength = elmChildNodesOfSvg.length;
+      for(var i=numLength-1;i>-1;i--) elmSvg.removeChild(elmChildNodesOfSvg[i])
+      a && fnRender();
+    }
+
+    document.addEventListener('DOMContentLoaded', fnRender);
+  </script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-110176760-1"></script>
+
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-110176760-1', 'auto');
+  ga('send', 'pageview');
+  </script>
+
+
+  <div id='btnContainer'>
+    <button class='btn btn-primary' type='button' onClick='fnReset()'>
+      <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
+      Reset
+    </button>
+    <div id='msg'></div>
+  </div>
+
+</body>
+</html>
